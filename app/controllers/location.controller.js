@@ -15,15 +15,23 @@ exports.create = (req, res) => {
         lng: req.body.lng
     });
 
-    // Save Note in the database
-    location.save()
-    .then(data => {
-        res.send(data);
-    }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the location."
-        });
-    });
+    Location.find({location : req.body.location}).exec(function(err, docs) {
+    if (docs.length){
+      return res.status(500).send({
+          message: "Location already exists"
+      });
+    } else {
+      location.save()
+      .then(data => {
+          res.send(data);
+      }).catch(err => {
+          res.status(500).send({
+              message: err.message || "Some error occurred while creating the location."
+          });
+      });
+    }
+  });
+
 };
 
 // Retrieve and return all notes from the database.
